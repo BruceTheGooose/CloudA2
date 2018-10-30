@@ -1,42 +1,28 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Scaling Assignment - Tweets</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-        <script>
-            var socket = io.connect('http://localhost:8080');
-            socket.on('stream', function(tweet) {
-              $('#tweetd').append(tweet+'<br>');
-            })
-        </script>
-    </head>
-    
-    <body>
-        <div class="title">
-            <h1>Tweet Analysis</h1>
-            <br>
-        </div>
-        <div class=" searchContainer">
-            <form action="/" method="post">
-                <div class="bar">
-                    <input type="text" name="search" placeholder="Search for a word!">
-                    <br>
-                </div>
-                <div id="submit">
-                    <input type="submit" value="Submit" id="submitBtn">
-                    <br>
-                </div>
-            </form>
-        </div>
-        <div class="tweetsContainter">
-            <div class="tweetd"></div>
-            <div class="graphs"></div>
-        </div>
-    </body>
-</html>
+<!DOCTYPE html>
+<script src="/index.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+
+<div id="basicSearch">
+  <h1 value="Live Twitter Feed">Live Twitter Feed</h1>
+<form id="twitter-search-form" action="/" method="GET">
+
+  <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag">
+<br> <br>
+  <input type="submit" name="submit" value="Start Live Feed" onclick="sendSearchValue();">
+</form>
+</div>
+ <script>
+       var socket = io.connect('http://localhost:8080');
+       socket.on('stream', function(tweet){
+       $('#tweetd').prepend(tweet+'<br>');
+       });
+
+function sendSearchValue(){
+  let searchValue = $('#searchBar').val();
+  socket.emit('search', searchValue);
+}
+
+ </script>
+ <br>
+ <div id="tweetd"></div>
