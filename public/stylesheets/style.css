@@ -1,9 +1,75 @@
 
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    height: 100%;
+    background-color: lightblue;
+    
 }
 
 a {
   color: #00B7FF;
+}
+
+.graphs{
+    position: absolute;
+    left: 30%;
+    height: 80%;
+    border-style: dashed;
+    width: 65%;
+}
+
+#basicSearch{
+    text-align: center;
+}
+
+#searchBar{
+    width: 30%;
+    font-size: 24px;
+}
+
+#submitBtn{
+    font-size: 24px;
+}
+
+#tweetd{
+    position: absolute;
+    width: 25%;
+    height: 80%;
+    overflow-y: scroll;
+    word-wrap: normal;
+    background-color: white;
+}
+
+#TweetsLbl{
+    position: relative;
+    width: 25%;
+    font-size: 18px;
+    text-align: center;
+    right: 65%;
+}
+
+#graphLbl{
+    position: relative;
+    width: 65%;
+    left: 30%;
+    font-size: 18px;
+    text-align: center;
+}
+
+#BarGraph{
+    position: absolute;
+    border-style:double;
+    top: 50%;
+    width: 100%;
+    height: 50%;
+    background-color: white;
+}
+
+#LineGraph{
+    background-color: white;
+    position: absolute;
+    border-style: dotted;
+    width: 100%;
+    height:50%;
 }

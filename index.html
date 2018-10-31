@@ -1,28 +1,53 @@
 <!DOCTYPE html>
-<script src="/index.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+<html>
+    <head>
+        <script src="/index.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>Live Twitter Feed</title>
+        <link rel="stylesheet" href="stylesheets/style.css">
+    </head>
+    <body>
+        <div id="basicSearch">
+          <h1 value="Live Twitter Feed">Live Twitter Feed</h1>
+        <form id="twitter-search-form" action="/" method="GET">
 
-<div id="basicSearch">
-  <h1 value="Live Twitter Feed">Live Twitter Feed</h1>
-<form id="twitter-search-form" action="/" method="GET">
+          <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag">
+          <input type="submit" name="submit" value="Start Live Feed" onclick="sendSearchValue();" id="submitBtn">
+        </form>
+        </div>
+        <script>
+               var socket = io.connect('http://localhost:8080');
+               socket.on('stream', function(tweet){
+                 var tweetMessage = tweet.tweet;
+                 var tweetCounter = tweet.counter;
+               $('#tweetd').prepend(tweetMessage+'<br>');
+               $('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
+               });
 
-  <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag">
-<br> <br>
-  <input type="submit" name="submit" value="Start Live Feed" onclick="sendSearchValue();">
-</form>
-</div>
- <script>
-       var socket = io.connect('http://localhost:8080');
-       socket.on('stream', function(tweet){
-       $('#tweetd').prepend(tweet+'<br>');
-       });
+        function sendSearchValue(){
+          let searchValue = $('#searchBar').val();
+          socket.emit('search', searchValue);
+        }
 
-function sendSearchValue(){
-  let searchValue = $('#searchBar').val();
-  socket.emit('search', searchValue);
-}
-
- </script>
- <br>
- <div id="tweetd"></div>
+        </script>
+        <br>
+        <!-- Results -->
+        <label id ="graphLbl">Analytical Graphs</label>
+        <div class = "graphs">
+            <div id = "BarGraph">
+                FILLER BAR GRAPH
+            </div>
+            <div id = "LineGraph">
+                FILLER LINE GRAPH
+            </div>
+        </div>
+        <label id = "TweetsLbl">Tweets</label>
+        <div id="tweetd">
+        </div>
+    </body>
+</html>

@@ -28,6 +28,10 @@ server.listen(8080);
 //which directory to use
 app.use(express.static(__dirname + '/routes'));
 
+//Middleware use for styling
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
 //routing
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
@@ -42,6 +46,7 @@ var T = new Twit({
 });
 
 let watchList;
+let tweetCounter = 0;
 
 //turn socket on
 io.sockets.on('connection', function (socket) {
@@ -60,8 +65,9 @@ io.sockets.on('connection', function (socket) {
   promise1.then(function(value){
     var stream = T.stream('statuses/filter', { track: value });
     stream.on('tweet', function (tweet) {
-      io.sockets.emit('stream',tweet.text);
-
+      tweetCounter++;
+      //Send tweetCounter to HTML
+      io.sockets.emit('stream', {tweet: tweet.text, counter: tweetCounter} );
       var params = {
         TableName: 'CloudPersistence',
         Item: {
