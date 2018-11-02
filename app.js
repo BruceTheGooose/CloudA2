@@ -47,7 +47,8 @@ var T = new Twit({
 
 let watchList;
 let tweetCounter = 0;
-
+let sentimentVal;
+let testArray = [];
 //turn socket on
 io.sockets.on('connection', function (socket) {
   console.log('Connected');
@@ -66,8 +67,13 @@ io.sockets.on('connection', function (socket) {
     var stream = T.stream('statuses/filter', { track: value });
     stream.on('tweet', function (tweet) {
       tweetCounter++;
+      //splits tweet up into individual words to be analysed by getSentiment
+      var tokenizedTweet = tokenizer.tokenize(tweet.text);
+      console.log(tokenizedTweet);
+      //getSentiment determines sentiment value of tweet
+      sentimentVal = analyzer.getSentiment(tokenizedTweet);
       //Send tweetCounter to HTML
-      io.sockets.emit('stream', {tweet: tweet.text, counter: tweetCounter} );
+      io.sockets.emit('stream', {tweet: tweet.text, counter: tweetCounter, sentiment: sentimentVal, search: watchList, tokenize: tokenizedTweet});
       var params = {
         TableName: 'CloudPersistence',
         Item: {
@@ -75,10 +81,7 @@ io.sockets.on('connection', function (socket) {
         }
       };
 
-      //console.log(tokenizer.tokenize(tweet.text));
-      var tokenizeTweet = tokenizer.tokenize(tweet.text);
-      //getSentiment expects an array of strings
-      console.log(analyzer.getSentiment(tokenizeTweet));
+
 
       // Call DynamoDB to add incoming tweets to the table
       ddb.putItem(params, function(err, data) {

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="/index.js"></script>
+        <!-- <script src="/index.js"></script> -->
         <script src="/socket.io/socket.io.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -16,34 +17,117 @@
           <h1 value="Live Twitter Feed">Live Twitter Feed</h1>
         <form id="twitter-search-form" action="/" method="GET">
 
-          <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag">
+          <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag" required>
           <input type="submit" name="submit" value="Start Live Feed" onclick="sendSearchValue();" id="submitBtn">
         </form>
         </div>
         <script>
-               var socket = io.connect('http://localhost:8080');
-               socket.on('stream', function(tweet){
-                 var tweetMessage = tweet.tweet;
-                 var tweetCounter = tweet.counter;
-               $('#tweetd').prepend(tweetMessage+'<br>');
-               $('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
-               });
+          //connect to the socket
+          let socket = io.connect('http://localhost:8080');
+          let dataset = [];
+          let tokenizedTweets = [];
+          let userSearch;
+          let averageSentimentValArray = [];
+          let sum = 0;
+          socket.on('stream', function(tweet){
+            //values being passed from the server
+            let tweetMessage = tweet.tweet;
+            let tweetCounter = tweet.counter;
+            tokenizedTweets.push(tweet.tokenize);
+            userSearch = tweet.search;
+            let sentimentVal = parseFloat(Math.round(tweet.sentiment * 100) / 100).toFixed(2);
+            let sentimentValNum = parseFloat(Math.round(tweet.sentiment * 100) / 100);
+            averageSentimentValArray.push(sentimentValNum);
+            //Get average
+            sum = averageSentimentValArray.reduce((a, b) => a+b, 0);
+            let averageSentimentVal = sum / averageSentimentValArray.length;
+            //console.log("Average Sentiment Value: " + averageSentimentVal);
 
-        function sendSearchValue(){
-          let searchValue = $('#searchBar').val();
-          socket.emit('search', searchValue);
-        }
+
+            //jQuery commands to update HTML elements
+            $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
+            //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
+            $('#TweetsLbl').text("Tweets (stream active for '" + userSearch + "')");
+            $('#graphLbl').text("Average Sentiment for '" + userSearch + "': " + averageSentimentVal.toFixed(10));
+            //empty the graph's div
+            $("#line-chart").empty();
+            //push each incoming tweet to the dataset
+            dataset.push([tweetCounter, sentimentVal]);
+            //removes values at the beginning of the values
+            //can change this if we want more values displaying in the graph
+            if (dataset.length > 50) {
+              dataset.shift();
+            }
+            constructLineGraph(dataset);
+          });
+
+          //send search term to the server
+          function sendSearchValue(){
+            let searchValue = $('#searchBar').val();
+            socket.emit('search', searchValue);
+          }
+
+          function constructLineGraph() {
+            //width, height and margin of the graph
+            var svgWidth = 1100, svgHeight = 400;
+            var margin = { top: 20, right: 50, bottom: 30, left: 50 };
+            var width = svgWidth - margin.left - margin.right;
+            var height = svgHeight - margin.top - margin.bottom;
+            //select svg element in html form
+            var svg = d3.select('svg')
+              .attr("width", svgWidth)
+              .attr("height", svgHeight);
+
+            var g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            //x-axis scaling
+            var x = d3.scaleLinear()
+              .rangeRound([0, width+500]);
+            //y-axis scaling
+            var y = d3.scaleLinear()
+              .rangeRound([height-130, 0]);
+            //draws the line in the graph
+            var line = d3.line()
+              .x(function(d) {return x(d[0])})
+              .y(function(d) {return y(d[1])})
+              x.domain(d3.extent(dataset, function(d) {return d[0]}));
+              y.domain([-1, 1]);
+
+            let xAxisPos = height-130;
+            g.append("g")
+              .attr("transform", "translate(0," + xAxisPos + ")")
+              .call(d3.axisBottom(x))
+              .select(".domain")
+              .remove();
+
+            g.append("g")
+              .call(d3.axisLeft(y))
+              .append("text")
+              .attr("fill","#000")
+              .attr("transform","rotate(-90)")
+              .attr("y",6)
+              .attr("dy","0.71em")
+              .attr("text-anchor","end");
+
+            g.append("path")
+              .datum(dataset)
+              .attr("fill","none")
+              .attr("stroke","steelblue")
+              .attr("stroke-linejoin","round")
+              .attr("stroke-linecap","round")
+              .attr("stroke-width",1.5)
+              .attr("d",line);
+          }
 
         </script>
+
         <br>
         <!-- Results -->
-        <label id ="graphLbl">Analytical Graphs</label>
+        <label id ="graphLbl"></label>
         <div class = "graphs">
-            <div id = "BarGraph">
+            <svg id="line-chart"></svg>
+            <div id="BarGraph">
                 FILLER BAR GRAPH
-            </div>
-            <div id = "LineGraph">
-                FILLER LINE GRAPH
             </div>
         </div>
         <label id = "TweetsLbl">Tweets</label>
