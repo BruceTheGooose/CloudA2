@@ -23,7 +23,7 @@ AWS.config.update({region: 'ap-southeast-2'});;
 ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
 //server to listen on
-server.listen(8080);
+server.listen(3000);
 
 //which directory to use
 app.use(express.static(__dirname + '/routes'));
