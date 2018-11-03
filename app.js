@@ -71,16 +71,13 @@ io.sockets.on('connection', function (socket) {
       var tokenizedTweet = tokenizer.tokenize(tweet.text);
       testArray += tweet.text;
       var splitArray = testArray.split(" ");
-      // var wordCounts = { };
-      // var words = testArray.split(/\b/);
+      var wordCounts = { };
+      var words = testArray.split(/\b/);
       // var top10words = [];
-      // for(var i = 0; i < words.length; i++) {
-      //   words[i].toLowerCase();
-      //   wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
-      //   if (wordCounts[words[i]] > 50) {
-      //     top10words.push(wordCounts[words[i]], words[i]);
-      //   }
-      // }
+      for(var i = 0; i < words.length; i++) {
+        words[i].toLowerCase();
+        wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
+      }
       //getSentiment determines sentiment value of tweet
       sentimentVal = analyzer.getSentiment(tokenizedTweet);
       //Send tweetCounter to HTML
