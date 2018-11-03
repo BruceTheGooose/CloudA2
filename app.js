@@ -23,7 +23,7 @@ AWS.config.update({region: 'ap-southeast-2'});;
 ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
 //server to listen on
-server.listen(8080);
+server.listen(3000);
 
 //which directory to use
 app.use(express.static(__dirname + '/routes'));
@@ -69,7 +69,18 @@ io.sockets.on('connection', function (socket) {
       tweetCounter++;
       //splits tweet up into individual words to be analysed by getSentiment
       var tokenizedTweet = tokenizer.tokenize(tweet.text);
-      console.log(tokenizedTweet);
+      testArray += tweet.text;
+      var splitArray = testArray.split(" ");
+      // var wordCounts = { };
+      // var words = testArray.split(/\b/);
+      // var top10words = [];
+      // for(var i = 0; i < words.length; i++) {
+      //   words[i].toLowerCase();
+      //   wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
+      //   if (wordCounts[words[i]] > 50) {
+      //     top10words.push(wordCounts[words[i]], words[i]);
+      //   }
+      // }
       //getSentiment determines sentiment value of tweet
       sentimentVal = analyzer.getSentiment(tokenizedTweet);
       //Send tweetCounter to HTML
@@ -81,8 +92,6 @@ io.sockets.on('connection', function (socket) {
         }
       };
 
-
-
       // Call DynamoDB to add incoming tweets to the table
       ddb.putItem(params, function(err, data) {
         if (err) {
@@ -93,6 +102,4 @@ io.sockets.on('connection', function (socket) {
       });
     }); //End stream
   });
-
-
  });

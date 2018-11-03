@@ -9,12 +9,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <title>Live Twitter Feed</title>
+        <title>TweetGeek</title>
         <link rel="stylesheet" href="stylesheets/style.css">
     </head>
     <body>
         <div id="basicSearch">
-          <h1 value="Live Twitter Feed">Live Twitter Feed</h1>
+          <h1 value="Live Twitter Feed">TweetGeek</h1>
         <form id="twitter-search-form" action="/" method="GET">
 
           <input type="text" name="search" id="searchBar" placeholder="Search for a hashtag" required>
@@ -23,7 +23,7 @@
         </div>
         <script>
           //connect to the socket
-          let socket = io.connect('http://localhost:8080');
+          let socket = io.connect('http://localhost:3000');
           let dataset = [];
           let tokenizedTweets = [];
           let userSearch;
@@ -41,9 +41,6 @@
             //Get average
             sum = averageSentimentValArray.reduce((a, b) => a+b, 0);
             let averageSentimentVal = sum / averageSentimentValArray.length;
-            //console.log("Average Sentiment Value: " + averageSentimentVal);
-
-
             //jQuery commands to update HTML elements
             $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
             //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
@@ -59,7 +56,38 @@
               dataset.shift();
             }
             constructLineGraph(dataset);
+            $('#most-common-word').text("Most common word: " + mostFreqStr(tokenizedTweets));
           });
+
+          function mostFreqStr(arr) {
+            var obj = {}, mostFreq = 0, which = [];
+
+            for (var i = 0; i < arr.length; i++) {
+              for (var j = 0; j < arr[i].length; j++) {
+                if (!obj[arr[i][j]]) {
+                  obj[arr[i][j]] = 1;
+                } else {
+                  obj[arr[i][j]]++;
+                }
+
+                if (obj[arr[i][j]] > mostFreq & arr[i][j] != "RT") {
+                  mostFreq = obj[arr[i][j]];
+                  which = [arr[i][j]];
+                } else if (obj[arr[i][j]] === mostFreq) {
+                  var whichPush = arr[i][j];
+                  which.push(whichPush);
+                }
+              };
+            };
+
+            if (which.length > 1) {
+              which = `"${which.join(`" and "`)}" have a frequency of: ` + mostFreq + "."
+            } else {
+              which = `"${which}" and it has occurred ` + mostFreq + " times."
+            }
+
+            return which;
+          }
 
           //send search term to the server
           function sendSearchValue(){
@@ -127,7 +155,7 @@
         <div class = "graphs">
             <svg id="line-chart"></svg>
             <div id="BarGraph">
-                FILLER BAR GRAPH
+                <label id ="most-common-word"></label>
             </div>
         </div>
         <label id = "TweetsLbl">Tweets</label>
