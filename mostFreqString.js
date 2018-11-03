@@ -23,8 +23,8 @@ function mostFreqStr(arr) {
     which = `"${which}" is the most frequent string in the array.`
   }
 
-  return which;
+  return which, mostFreq;
 }
 
-document.body.innerHTML += (mostFreqStr(["x", "x", "y", "y", "y", "z"])) + `<br/>`; //"y" is the most frequent string in the array.
-document.body.innerHTML += (mostFreqStr(["x", "x", "x", "y", "y", "y", "z"])) + `<br/>`; //"x" and "y" are the most frequent strings in the array.
+console.log(mostFreqStr(["x", "x", "y", "y", "y", "z"]));
+console.log(mostFreqStr([["x", "z"], ["x", "x"], ["y", "xy"], ["y", "yy"], ["z"]]));
