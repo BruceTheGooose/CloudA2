@@ -103,3 +103,4 @@ io.sockets.on('connection', function (socket) {
     }); //End stream
   });
  });
+module.exports = app;
