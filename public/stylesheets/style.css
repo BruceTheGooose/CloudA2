@@ -15,7 +15,6 @@ a {
     position: absolute;
     left: 30%;
     height: 80%;
-    border-style: dashed;
     width: 65%;
 }
 
@@ -59,17 +58,15 @@ a {
 
 #BarGraph{
     position: absolute;
-    border-style:double;
-    top: 50%;
+    top: 55%;
     width: 100%;
-    height: 50%;
+    height: 45%;
     background-color: white;
 }
 
 #line-chart{
     background-color: white;
     position: absolute;
-    border-style: dotted;
     width: 100%;
     height:50%;
 }

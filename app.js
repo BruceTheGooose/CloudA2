@@ -49,26 +49,6 @@ let watchList;
 let tweetCounter = 0;
 let sentimentVal;
 let testArray = [];
-let readParams = {
-  TableName: 'CloudPersistence',
-  ProjectionExpression: 'Content',
-  Key: { // a map of attribute name to AttributeValue for all primary key attributes
-        Content: { S: 'the' }
-  },
-};
-
-ddb.getItem(readParams, function(err, data) {
-  if (err) {
-    console.log("Error", err);
-  } else {
-    //log every element that is in the table
-    data.Items.forEach(function(element, index, array) {
-      console.log(element);
-      var tokenizedTweet = tokenizer.tokenize(element.Content.S);
-      sentimentVal = analyzer.getSentiment(tokenizedTweet);
-    })
-  }
-});
 
 //turn socket on
 io.sockets.on('connection', function (socket) {
