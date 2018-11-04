@@ -28,6 +28,7 @@
           let tokenizedTweets = [];
           let userSearch;
           let averageSentimentValArray = [];
+          let mostPosTweet = 0, mostNegTweet = 0;
           let sum = 0;
           socket.on('stream', function(tweet){
             //values being passed from the server
@@ -35,12 +36,26 @@
             let tweetCounter = tweet.counter;
             tokenizedTweets.push(tweet.tokenize);
             userSearch = tweet.search;
-            let sentimentVal = parseFloat(Math.round(tweet.sentiment * 100) / 100).toFixed(2);
+            let sentimentVal = parseFloat(Math.round(tweet.sentiment * 100) / 100);
             let sentimentValNum = parseFloat(Math.round(tweet.sentiment * 100) / 100);
             averageSentimentValArray.push(sentimentValNum);
             //Get average
             sum = averageSentimentValArray.reduce((a, b) => a+b, 0);
             let averageSentimentVal = sum / averageSentimentValArray.length;
+
+            if (sentimentVal > parseFloat(Math.round(mostPosTweet * 100) / 100)) {
+              mostPosTweet = sentimentVal;
+              let mostPosComment = "Highest sentiment value: " + sentimentVal + "\n" + tweetMessage;
+              console.log(mostPosComment);
+              $('#most-positive-tweet').text(mostPosComment);
+            }
+            if (sentimentVal < parseFloat(Math.round(mostNegTweet * 100) / 100)) {
+              mostNegTweet = sentimentVal;
+              let mostNegComment = "Lowest sentiment value: " + sentimentVal + "\n" + tweetMessage;
+              console.log(mostNegComment);
+              $('#most-negative-tweet').text(mostNegComment);
+            }
+
             //jQuery commands to update HTML elements
             $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
             //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
@@ -56,7 +71,7 @@
               dataset.shift();
             }
             constructLineGraph(dataset);
-            $('#most-common-word').text("Most common word: " + mostFreqStr(tokenizedTweets));
+            $('#most-common-word').text("Most common word is " + mostFreqStr(tokenizedTweets));
           });
 
           function mostFreqStr(arr) {
@@ -155,7 +170,12 @@
         <div class = "graphs">
             <svg id="line-chart"></svg>
             <div id="BarGraph">
-                <label id ="most-common-word"></label>
+              <br>
+              <label id ="most-common-word"></label>
+              <br>
+              <label id ="most-positive-tweet"></label>
+              <br>
+              <label id ="most-negative-tweet"></label>
             </div>
         </div>
         <label id = "TweetsLbl">Tweets</label>
