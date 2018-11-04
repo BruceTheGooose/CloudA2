@@ -20,11 +20,12 @@ socket.on('stream', function(tweet){
   sum = averageSentimentValArray.reduce((a, b) => a+b, 0);
   let averageSentimentVal = sum / averageSentimentValArray.length;
 
+  //Process sentiment values to determine top 3 most positive tweets
   if (sentimentVal > parseFloat(Math.round(mostPosTweet * 100) / 100)) {
     $("#positive-list").empty();
     mostPosTweet = sentimentVal;
     mostPosComment.unshift(sentimentVal + "\n" + tweetMessage);
-    if (mostPosComment.length > 4) {
+    if (mostPosComment.length > 3) {
       mostPosComment.pop();
     }
     var positiveList = document.getElementById('positive-list');
@@ -38,11 +39,13 @@ socket.on('stream', function(tweet){
         positiveList.appendChild(item);
     }
   }
+
+  //Process sentiment value for top 3 most negative tweets
   if (sentimentVal < parseFloat(Math.round(mostNegTweet * 100) / 100)) {
     $("#negative-list").empty();
     mostNegTweet = sentimentVal;
     mostNegComment.unshift(sentimentVal + "\n" + tweetMessage);
-    if (mostNegComment.length > 4) {
+    if (mostNegComment.length > 3) {
       mostNegComment.pop();
     }
     var negativeList = document.getElementById('negative-list');
@@ -55,11 +58,11 @@ socket.on('stream', function(tweet){
         negativeList.appendChild(item);
     }
   }
+  //UPDATE HTML
   $('#mostPositive').text("Most Positive Tweets:");
   $('#mostNegative').text("Most Negative Tweets:");
   //jQuery commands to update HTML elements
   $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
-  //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
   $('#TweetsLbl').text("Tweets (stream active for '" + userSearch + "')");
   $('#graphLbl').text("Average sentiment for '" + userSearch + "': " + averageSentimentVal.toFixed(10));
   //empty the graph's div
@@ -75,6 +78,7 @@ socket.on('stream', function(tweet){
   $('#most-common-word').text("Most common word is " + mostFreqStr(tokenizedTweets));
 });
 
+//Determines the most frequent string from tweet
 function mostFreqStr(arr) {
   var obj = {}, mostFreq = 0, which = [];
 
@@ -105,7 +109,7 @@ function mostFreqStr(arr) {
   return which;
 }
 
-//send search term to the server
+//send search term to the server when user presses enter or clicks on button
 function sendSearchValue() {
     //socket.disconnect();
   let searchValue = $('#searchBar').val();
@@ -113,6 +117,7 @@ function sendSearchValue() {
 
 }
 
+//Constructs the line graph
 function constructLineGraph() {
   //width, height and margin of the graph
   var svgWidth = 1100, svgHeight = 500;
@@ -139,13 +144,14 @@ function constructLineGraph() {
     x.domain(d3.extent(dataset, function(d) {return d[0]}));
     y.domain([-1, 1]);
 
+  //Display the x axis in certain position
   let xAxisPos = height-140;
   g.append("g")
     .attr("transform", "translate(0," + xAxisPos + ")")
     .call(d3.axisBottom(x))
     .select(".domain")
     .remove();
-
+//Displays y-axis
   g.append("g")
     .call(d3.axisLeft(y))
     .append("text")
@@ -154,7 +160,7 @@ function constructLineGraph() {
     .attr("y",6)
     .attr("dy","0.71em")
     .attr("text-anchor","end");
-
+//Displays line (constructs the path)
   g.append("path")
     .datum(dataset)
     .attr("fill","none")

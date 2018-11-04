@@ -64,7 +64,9 @@ io.sockets.on('connection', function (socket) {
 
   //Use the resolve variable for twitter streaming from db.
   promise1.then(function(value){
+    //Get tweets
     var stream = T.stream('statuses/filter', { track: value });
+    //For each tweet
     stream.on('tweet', function (tweet) {
       tweetCounter++;
       //splits tweet up into individual words to be analysed by getSentiment
@@ -86,4 +88,5 @@ io.sockets.on('connection', function (socket) {
     }); //End stream
   });
  });
+ 
 module.exports = app;
