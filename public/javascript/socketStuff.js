@@ -24,7 +24,7 @@ socket.on('stream', function(tweet){
     $("#positive-list").empty();
     mostPosTweet = sentimentVal;
     mostPosComment.unshift(sentimentVal + "\n" + tweetMessage);
-    if (mostPosComment.length > 5) {
+    if (mostPosComment.length > 4) {
       mostPosComment.pop();
     }
     var positiveList = document.getElementById('positive-list');
@@ -42,7 +42,7 @@ socket.on('stream', function(tweet){
     $("#negative-list").empty();
     mostNegTweet = sentimentVal;
     mostNegComment.unshift(sentimentVal + "\n" + tweetMessage);
-    if (mostNegComment.length > 5) {
+    if (mostNegComment.length > 4) {
       mostNegComment.pop();
     }
     var negativeList = document.getElementById('negative-list');
@@ -55,7 +55,8 @@ socket.on('stream', function(tweet){
         negativeList.appendChild(item);
     }
   }
-
+  $('#mostPositive').text("Most Positive Tweets:");
+  $('#mostNegative').text("Most Negative Tweets:");
   //jQuery commands to update HTML elements
   $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
   //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
