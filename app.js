@@ -1,3 +1,4 @@
+//required packages
 var express = require('express')
   , app = express()
   , http = require('http')
@@ -5,35 +6,33 @@ var express = require('express')
   , Twit = require('twit')
   , io = require('socket.io').listen(server);
 
-//tokenizer
+//requirements for tokenizer
 var natural = require('natural');
 var tokenizer = new natural.WordTokenizer();
-
-//sentiment analysis
+//requirements for sentiment analysis
 var Analyzer = require('natural').SentimentAnalyzer;
 var stemmer = require('natural').PorterStemmer;
 var analyzer = new Analyzer("English", stemmer, "afinn");
 
-//the following 3 things are required for DynamoDB interaction
-// Load the AWS SDK for Node.js
+//the following 3 lines of code are required for DynamoDB interaction
+//load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
-// Set the region
+//set the region
 AWS.config.update({region: 'ap-southeast-2'});;
-// Create the DynamoDB service object
+//create the DynamoDB service object
 ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
-
-//server to listen on
+//listen on port 3000
 server.listen(3000);
-
 //which directory to use
 app.use(express.static(__dirname + '/routes'));
-
-//Middleware use for styling
+//middleware use for styling
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
-
-//routing
+//display index.html when user loads application
 app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+app.get('/*', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
