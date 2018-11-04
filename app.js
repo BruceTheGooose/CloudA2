@@ -81,22 +81,8 @@ io.sockets.on('connection', function (socket) {
       //getSentiment determines sentiment value of tweet
       sentimentVal = analyzer.getSentiment(tokenizedTweet);
       //Send tweetCounter to HTML
-      io.sockets.emit('stream', {tweet: tweet.text, counter: tweetCounter, sentiment: sentimentVal, search: watchList, tokenize: tokenizedTweet});
-      var params = {
-        TableName: 'CloudPersistence',
-        Item: {
-          'Content' : {S: tweet.text},
-        }
-      };
-
-      // Call DynamoDB to add incoming tweets to the table
-      ddb.putItem(params, function(err, data) {
-        if (err) {
-          console.log("Error", err);
-        } else {
-          //console.log("Item sent to db");
-        }
-      });
+      io.sockets.emit('stream', {tweet: tweet.text, counter: tweetCounter,
+        sentiment: sentimentVal, search: watchList, tokenize: tokenizedTweet});
     }); //End stream
   });
  });

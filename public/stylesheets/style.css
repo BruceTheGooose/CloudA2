@@ -1,6 +1,6 @@
 
 body {
-    padding: 50px;
+    padding: 20px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 100%;
     background-color: lightblue;
@@ -13,9 +13,9 @@ a {
 
 .graphs{
     position: absolute;
-    left: 30%;
+    left: 32%;
     height: 80%;
-    width: 65%;
+    width: 63%;
 }
 
 #basicSearch{
@@ -33,6 +33,7 @@ a {
 
 #tweetd{
     position: absolute;
+    left: 5%;
     width: 25%;
     height: 80%;
     overflow-y: scroll;
@@ -45,7 +46,7 @@ a {
     width: 25%;
     font-size: 18px;
     text-align: center;
-    right: 65%;
+    right: 61%;
 }
 
 #graphLbl{

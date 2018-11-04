@@ -6,6 +6,7 @@ let userSearch;
 let averageSentimentValArray = [];
 let mostPosTweet = 0, mostNegTweet = 0;
 let sum = 0;
+var mostPosComment = [], mostNegComment = [];
 socket.on('stream', function(tweet){
   //values being passed from the server
   let tweetMessage = tweet.tweet;
@@ -20,23 +21,46 @@ socket.on('stream', function(tweet){
   let averageSentimentVal = sum / averageSentimentValArray.length;
 
   if (sentimentVal > parseFloat(Math.round(mostPosTweet * 100) / 100)) {
+    $("#positive-list").empty();
     mostPosTweet = sentimentVal;
-    let mostPosComment = "Highest sentiment value: " + sentimentVal + "\n" + tweetMessage;
-    console.log(mostPosComment);
-    $('#most-positive-tweet').text(mostPosComment);
+    mostPosComment.unshift(sentimentVal + "\n" + tweetMessage);
+    if (mostPosComment.length > 5) {
+      mostPosComment.pop();
+    }
+    var positiveList = document.getElementById('positive-list');
+    for(var i = 0; i < mostPosComment.length; i++) {
+        // Create the list item:
+        var item = document.createElement('li');
+        // Set its contents:
+        item.appendChild(document.createTextNode(mostPosComment[i]));
+
+        // Add it to the list:
+        positiveList.appendChild(item);
+    }
   }
   if (sentimentVal < parseFloat(Math.round(mostNegTweet * 100) / 100)) {
+    $("#negative-list").empty();
     mostNegTweet = sentimentVal;
-    let mostNegComment = "Lowest sentiment value: " + sentimentVal + "\n" + tweetMessage;
-    console.log(mostNegComment);
-    $('#most-negative-tweet').text(mostNegComment);
+    mostNegComment.unshift(sentimentVal + "\n" + tweetMessage);
+    if (mostNegComment.length > 5) {
+      mostNegComment.pop();
+    }
+    var negativeList = document.getElementById('negative-list');
+    for(var i = 0; i < mostNegComment.length; i++) {
+        // Create the list item:
+        var item = document.createElement('li');
+        // Set its contents:
+        item.appendChild(document.createTextNode(mostNegComment[i]));
+        // Add it to the list:
+        negativeList.appendChild(item);
+    }
   }
 
   //jQuery commands to update HTML elements
   $('#tweetd').prepend(tweetMessage+'<br>' + "sentiment: " + sentimentVal + "<br><br>");
   //$('#TweetsLbl').text("Tweets (Number of Tweets: " + tweetCounter + ")");
   $('#TweetsLbl').text("Tweets (stream active for '" + userSearch + "')");
-  $('#graphLbl').text("Average Sentiment for '" + userSearch + "': " + averageSentimentVal.toFixed(10));
+  $('#graphLbl').text("Average sentiment for '" + userSearch + "': " + averageSentimentVal.toFixed(10));
   //empty the graph's div
   $("#line-chart").empty();
   //push each incoming tweet to the dataset

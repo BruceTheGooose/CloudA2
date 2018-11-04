@@ -22,24 +22,31 @@
           <input type="submit" name="submit" value="Start Live Feed" onclick="sendSearchValue();" id="submitBtn">
         </form>
         </div>
-
         <br>
         <!-- Results -->
-        <label id ="graphLbl"></label>
+        <b><label id ="graphLbl"></label></b>
         <div class = "graphs">
             <svg id="line-chart"></svg>
             <br>
             <br>
             <div id="BarGraph">
               <br>
-              <label id ="most-common-word"></label>
+              <h5 id ="most-common-word"></h5>
               <br>
-              <label id ="most-positive-tweet"></label>
+              <h5>Most positive tweets:</h5>
+              <label id ="most-positive-tweet">
+                <ul id = "positive-list">
+                </ul>
+              </label>
               <br>
-              <label id ="most-negative-tweet"></label>
+              <h5>Most negative tweets:</h5>
+              <label id ="most-negative-tweet">
+                <ul id = "negative-list">
+                </ul>
+              </label>
             </div>
         </div>
-        <label id = "TweetsLbl">Tweets</label>
+        <b><label id = "TweetsLbl">Tweets</label></b>
         <div id="tweetd">
         </div>
     </body>
